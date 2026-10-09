@@ -28,3 +28,7 @@ Pinned [llama.cpp v0.6.0](https://github.com/ggml-org/llama.cpp/releases/tag/v0.
 ## ADR-15 — Native options and UTF-8 adaptation
 
 v0.6.0 replaced the plan's LLAMA_CURL option with LLAMA_OPENSSL. Disable LLAMA_OPENSSL, LLAMA_BUILD_APP, and LLAMA_BUILD_COMMON alongside tests/tools/server so no unnecessary targets or downloads are built. NDK r28 and CMake 3.22.1 are used first. JNI converts UTF-16 to real UTF-8 instead of modified UTF-8, preserving Filipino text and emoji. `llama_model_params.use_mmap` was replaced by `load_mode`; use `LLAMA_LOAD_MODE_MMAP`. Native logs are suppressed; only Kotlin measurement metadata may be logged.
+
+## ADR-16 — Retain Qwen 1.5B after measured selection
+
+The spike benchmark compared all three planned models on 20 fixtures. Qwen 1.5B met valid-JSON and latency gates and had the highest verdict accuracy (13/20, versus Gemma 11/20 and Qwen 0.5B 9/20). The two-message lead is larger than the plan's tie window. Retain the default. These limited spike results expose false positives and are not a production accuracy claim; see `BENCHMARKS.md`.

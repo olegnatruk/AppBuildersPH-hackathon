@@ -15,7 +15,17 @@ assert os.path.getsize(p)>100_000_000, 'Model is truncated'
 PY
     mv "models/$name.part" "models/$name"
   fi
-  shasum -a 256 "models/$name"
+  python3 - "models/$name" scripts/model-checksums.txt <<'PYHASH'
+import hashlib,sys
+from pathlib import Path
+p=Path(sys.argv[1])
+expected={line.split()[1]:line.split()[0] for line in Path(sys.argv[2]).read_text().splitlines()}[p.name]
+h=hashlib.sha256()
+with p.open("rb") as f:
+    while b:=f.read(1024*1024): h.update(b)
+assert h.hexdigest()==expected, "SHA-256 mismatch: " + p.name
+print(h.hexdigest(),p.name)
+PYHASH
 }
 fetch Qwen/Qwen2.5-1.5B-Instruct-GGUF 91cad51170dc346986eccefdc2dd33a9da36ead9 qwen2.5-1.5b-instruct-q4_k_m.gguf
 fetch Qwen/Qwen2.5-0.5B-Instruct-GGUF 9217f5db79a29953eb74d5343926648285ec7e67 qwen2.5-0.5b-instruct-q4_k_m.gguf
