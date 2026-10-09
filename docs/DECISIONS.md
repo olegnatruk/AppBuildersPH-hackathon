@@ -32,3 +32,7 @@ v0.6.0 replaced the plan's LLAMA_CURL option with LLAMA_OPENSSL. Disable LLAMA_O
 ## ADR-16 — Retain Qwen 1.5B after measured selection
 
 The spike benchmark compared all three planned models on 20 fixtures. Qwen 1.5B met valid-JSON and latency gates and had the highest verdict accuracy (13/20, versus Gemma 11/20 and Qwen 0.5B 9/20). The two-message lead is larger than the plan's tie window. Retain the default. These limited spike results expose false positives and are not a production accuracy claim; see `BENCHMARKS.md`.
+
+## ADR-17 — Reserve full card spans during ordered masking
+
+Keep the plan's OTP → card → secret → account replacement priority, but identify valid full card spans first and exclude those from OTP candidates. Otherwise a nearby PIN/code label could redact only four digits of a spaced card and leave the remainder on disk. Currency amounts and phone numbers remain visible; tests cover these overlaps and final masked-coordinate offsets.
