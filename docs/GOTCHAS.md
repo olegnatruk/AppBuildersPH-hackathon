@@ -23,3 +23,7 @@ An emulator launch crashed with `No ActivityResultRegistryOwner` after LocalCont
 ## Gradle device tests may remove app/model storage
 
 The connected-test runner uninstalled the target APK at teardown on this host, deleting its external model folder. A subsequent run skipped real-model tests. Those assumption skips are not native passes. For a provisioned emulator, install both APKs and invoke `adb shell am instrument -w -r ph.salagtrace.test/androidx.test.runner.AndroidJUnitRunner` directly; it preserves app/model storage. Reprovision after a Gradle teardown. The final provisioned suite passed 8 tests with 4 explicit optional skips.
+
+## Background quota can stop work before inference
+
+The ten-SMS foreground/background burst completed its SMS jobs, but JobScheduler interrupted a queued evaluation worker before native inference. Its replacement skipped the AI_FAILED row. Preserve QUEUED_AI for OS-stopped work and mark explicit cancellation before calling WorkManager cancel. StoppedWorkerTest exercises a real worker queued behind real native inference and verifies the conditional reset. The exploratory evaluation was aborted and rerun with the repair; its earlier rule-only failure is not counted as a successful AI run.

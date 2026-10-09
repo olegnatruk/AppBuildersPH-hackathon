@@ -62,9 +62,9 @@ class AppViewModel(private val c: AppContainer) : ViewModel() {
     fun submit(sender: String, body: String, onSaved: (Long) -> Unit) = action { val id = c.messages.accept(sender.ifBlank { "Manual input" }, body, System.currentTimeMillis(), Source.MANUAL); onSaved(id) }
     fun rerun(id: Long) = action { c.messages.rerun(id) }
     fun cancel(id: Long) = action {
-        c.engine.cancel(id); c.scheduler.cancel(id)
         val m = c.database.messages().byId(id) ?: return@action
         c.database.messages().update(m.copy(state = AnalysisState.AI_FAILED, error = "Analysis canceled. Rule check remains available.", modelName = null))
+        c.engine.cancel(id); c.scheduler.cancel(id)
     }
     fun delete(id: Long) = action { c.engine.cancel(id); c.scheduler.cancel(id); c.database.messages().deleteById(id); c.notifier.cancel(id) }
     fun deleteAll(resetConsent: Boolean = false) = action {

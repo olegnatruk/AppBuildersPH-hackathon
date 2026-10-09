@@ -32,7 +32,9 @@ class UiFlowTest {
         ui.onNodeWithText("Your OTP is [OTP]",substring = true).assertExists()
         val row = runBlocking { c.database.messages().observeAll().first().first { it.source == Source.MANUAL && it.maskedBody.contains("Do not share this code") } }
         assertFalse(row.maskedBody.contains("937152")); assertFalse(row.isAiResult())
-        // Carrier inbox is never touched; remove only the test-created app record.
-        runBlocking { c.database.messages().deleteById(row.id) }
+        ui.onNode(hasScrollAction()).performScrollToNode(hasText("Delete this record"))
+        ui.onNodeWithText("Delete this record").performClick()
+        ui.onNodeWithText("Delete").performClick()
+        ui.waitUntil(5_000) { runBlocking { c.database.messages().byId(row.id) == null } }
     }
 }

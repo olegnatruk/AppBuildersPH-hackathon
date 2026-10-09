@@ -147,4 +147,7 @@
     <string name="permission_needed">Consent and SMS permission are needed.</string>
     <string name="retried">AI retried once after invalid output.</string>
     <string name="canceled">Analysis canceled. Rule check remains available.</string>
+    <string name="just_now">Just now</string>
+    <string name="minutes_ago">%1$d min ago</string>
+    <string name="hours_ago">%1$d h ago</string>
 </resources>

@@ -70,7 +70,9 @@ class AnalysisWorker(context: Context, parameters: WorkerParameters) : Coroutine
             c.onAnalyzed(id)
             return Result.success()
         } catch (e: CancellationException) {
-            withContext(NonCancellable) { fail(row, AnalysisState.AI_FAILED, "Analysis canceled. Rule check remains available.") }
+            // Android may stop a queued/running job for quota or scheduling reasons.
+            // WorkManager reschedules it; explicit UI cancellation already marks AI_FAILED.
+            withContext(NonCancellable) { c.database.messages().requeueStopped(id) }
             throw e
         } catch (_: ModelLoadException) {
             fail(row, AnalysisState.AI_FAILED, "Model could not load. Check the GGUF file and available memory.")

@@ -23,13 +23,13 @@ class FinalPipelineBenchmarkTest {
         try {
             fixtures.forEach { f ->
                 val id = c.messages.accept("eval-${f.getValue("id").jsonPrimitive.content}",f.getValue("body").jsonPrimitive.content,System.currentTimeMillis(),Source.MANUAL)
-                val m = withTimeout(220_000) { c.database.messages().observeById(id).first { it?.state !in setOf(null,AnalysisState.QUEUED_AI,AnalysisState.ANALYZING) } }!!
+                val m = withTimeout(900_000) { c.database.messages().observeById(id).first { it?.state !in setOf(null,AnalysisState.QUEUED_AI,AnalysisState.ANALYZING) } }!!
                 val scam = f.getValue("scam").jsonPrimitive.boolean
                 results += buildJsonObject {
                     put("id",f.getValue("id")); put("expectedScam",scam); put("verdict",m.verdict.wire); put("state",m.state.name)
                     put("correct",(m.verdict in setOf(Verdict.LIKELY_SCAM,Verdict.SUSPICIOUS)) == scam)
                     put("latencyMs",m.latencyMs ?: 0); put("evidenceCount",m.evidence().size); put("droppedEvidence",m.droppedEvidence)
-                    put("disagreement",m.disagreement); put("language",m.explanationLang ?: "RULE_CHECK")
+                    put("failureReason",m.error ?: ""); put("disagreement",m.disagreement); put("language",m.explanationLang ?: "RULE_CHECK")
                 }
                 File(i.targetContext.getExternalFilesDir(null),"final-pipeline.json").writeText(JsonArray(results).toString())
                 c.database.messages().deleteById(id)

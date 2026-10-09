@@ -18,6 +18,8 @@ interface MessageDao {
     @Query("DELETE FROM scanned_messages WHERE receivedAt < :timestamp") suspend fun deleteOlderThan(timestamp: Long)
     @Query("SELECT COUNT(*) FROM scanned_messages WHERE receivedAt >= :timestamp") fun countSince(timestamp: Long): Flow<Int>
     @Query("SELECT * FROM scanned_messages WHERE state IN ('QUEUED_AI','ANALYZING')") suspend fun pendingAi(): List<ScannedMessageEntity>
+    @Query("UPDATE scanned_messages SET state = 'QUEUED_AI', analysisStartedAt = NULL WHERE id = :id AND state IN ('QUEUED_AI', 'ANALYZING')")
+    suspend fun requeueStopped(id: Long): Int
     @Query("UPDATE scanned_messages SET state = :state, analysisStartedAt = :startedAt WHERE id = :id")
     suspend fun setState(id: Long, state: AnalysisState, startedAt: Long? = null)
 }

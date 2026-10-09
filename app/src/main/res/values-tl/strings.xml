@@ -147,4 +147,7 @@
     <string name="permission_needed">Kailangan ng consent at SMS permission.</string>
     <string name="retried">Inulit nang isang beses ang AI dahil hindi valid ang unang output.</string>
     <string name="canceled">Kinansela ang analysis. Available pa rin ang rule check.</string>
+    <string name="just_now">Ngayon lang</string>
+    <string name="minutes_ago">%1$d min ang nakalipas</string>
+    <string name="hours_ago">%1$d oras ang nakalipas</string>
 </resources>

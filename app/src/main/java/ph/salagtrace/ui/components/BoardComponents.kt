@@ -7,7 +7,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -95,7 +96,7 @@ fun modelLabel(name: String) = when {
         Text(m.maskedBody, fontFamily = PlexMono, maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.bodySmall)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(stateText(m), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT).format(java.util.Date(m.receivedAt)), style = MaterialTheme.typography.labelSmall, fontFamily = PlexMono)
+            Text(relativeTime(m.receivedAt), style = MaterialTheme.typography.labelSmall, fontFamily = PlexMono)
         }
         if (m.state in setOf(AnalysisState.QUEUED_AI, AnalysisState.ANALYZING)) LinearProgressIndicator(Modifier.fillMaxWidth())
     }
@@ -105,3 +106,16 @@ fun modelLabel(name: String) = when {
         confirmButton = { TextButton(onClick = onConfirm) { Text(text(confirm)) } }, dismissButton = { TextButton(onClick = onDismiss) { Text(text(R.string.cancel)) } })
 }
 fun decimal(value: Double) = String.format(Locale.US, "%.1f", value)
+
+@Composable private fun relativeTime(receivedAt: Long): String {
+    val now by produceState(System.currentTimeMillis(),receivedAt) {
+        while(true) { delay(60_000); value = System.currentTimeMillis() }
+    }
+    val minutes = ((now - receivedAt)/60_000).coerceAtLeast(0)
+    return when {
+        minutes == 0L -> text(R.string.just_now)
+        minutes < 60 -> text(R.string.minutes_ago,minutes)
+        minutes < 1440 -> text(R.string.hours_ago,minutes/60)
+        else -> java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.SHORT,java.text.DateFormat.SHORT).format(java.util.Date(receivedAt))
+    }
+}

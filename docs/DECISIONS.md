@@ -68,3 +68,7 @@ The full prompt's OTP example biased a link-only sample toward OTP theft. Add an
 ## ADR-25 — Pin Espresso 3.7.0 for API 37 device tests
 
 Compose's transitive older Espresso failed before the UI test could interact: reflective `InputManager.getInstance` is unavailable on API 37. Add a test-only explicit Espresso 3.7.0 dependency. Its [official release notes](https://developer.android.com/jetpack/androidx/releases/test#espresso-3.7.0) document using getSystemService instead. No production dependency or permission changes.
+
+## ADR-26 — OS-stopped work remains queued
+
+A real background SMS burst caused JobScheduler to stop a worker waiting for the engine, then reschedule it. Treating every coroutine cancellation as AI_FAILED made the replacement worker skip that message. Cancellation from Android now conditionally resets only QUEUED_AI/ANALYZING rows to QUEUED_AI; WorkManager handles rescheduling. The UI marks explicit cancellation terminal before stopping work, so it cannot be re-queued. Deleted, completed or explicitly canceled rows are not changed. Evaluation wait bounds allow queued burst work without changing the native 90-second inference cap.
