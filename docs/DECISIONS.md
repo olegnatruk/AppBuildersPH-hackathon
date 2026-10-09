@@ -24,3 +24,7 @@ The plan permits replicating the Empty Activity template. Use AGP 8.13.1, Gradle
 ## ADR-14 — Pin llama.cpp v0.6.0
 
 Pinned [llama.cpp v0.6.0](https://github.com/ggml-org/llama.cpp/releases/tag/v0.6.0), commit `d81235049384534c167caea52b85a694f6103d14`, in `third_party/llama.cpp`. The newest release at setup uses a semantic tag rather than the plan's `bNNNN` naming. Public JNI APIs are checked against this pinned header. No runtime update mechanism exists.
+
+## ADR-15 — Native options and UTF-8 adaptation
+
+v0.6.0 replaced the plan's LLAMA_CURL option with LLAMA_OPENSSL. Disable LLAMA_OPENSSL, LLAMA_BUILD_APP, and LLAMA_BUILD_COMMON alongside tests/tools/server so no unnecessary targets or downloads are built. NDK r28 and CMake 3.22.1 are used first. JNI converts UTF-16 to real UTF-8 instead of modified UTF-8, preserving Filipino text and emoji. `llama_model_params.use_mmap` was replaced by `load_mode`; use `LLAMA_LOAD_MODE_MMAP`. Native logs are suppressed; only Kotlin measurement metadata may be logged.
