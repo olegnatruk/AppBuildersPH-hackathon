@@ -40,3 +40,7 @@ Keep the plan's OTP → card → secret → account replacement priority, but id
 ## ADR-18 — Family scoring and recovery metadata
 
 Rule scores count each family once (maximum matched weight), preventing repeated synonyms or repeated SMS text from inflating risk. Brand mentions add a combined boost only with another signal. Benign do-not-share warnings are excluded from credential-request gating, and do not suppress positive requests or links. Add `analysisStartedAt` and native prefill/generation/load timing columns to Room version 1 for honest recovery and self-test metrics; no raw body or raw AI JSON column exists.
+
+## ADR-19 — Calibrate the full prompt after spike false positives
+
+Keep the plan's untrusted-data, exact-quote, concise-language instructions and add explicit benign examples (ordinary chats, receipts, delivery updates) and the distinction between mentioning an OTP/payment and requesting one. This responds to measured spike false positives without changing model selection or inventing accuracy claims. Escape chat role tokens as well as SMS closing tags; truncate without splitting an emoji surrogate pair. Native output is still grammar constrained, validated, and fused. Static recommendations use generic official-channel wording instead of unverified hotline numbers; [GCash's official guidance](https://help.gcash.com/hc/en-us/articles/19578518834457-How-can-I-protect-my-GCash-account) supports the credential and verification advice.
