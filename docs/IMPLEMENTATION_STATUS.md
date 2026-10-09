@@ -8,7 +8,7 @@ The supplied plan's local Android deliverable is implemented. Publication/submis
 | M1 Real technical spike | Background/multipart SMS, JNI Release build, all three model benchmarks, Qwen 1.5B selected, checksummed host provisioning |
 | M2 P0 pipeline | Mask → rules → Room → WorkManager → real grammar-constrained local AI → validated quotes/fusion → detail; failure/cancel/recovery controls; tagged v0.1-p0 APK |
 | M3 P1 | Evidence Board themes/fonts, three-step consent/permissions, Home, filtered messages, private deep-linked alerts, settings/model SAF import/self-test, Filipino/English, manual checker |
-| M4 Hardening/docs/release | Actual results in TEST_REPORT/BENCHMARKS; release APK, source/disclosures/licenses/setup/demo handoff |
+| M4 Hardening/docs/release | Actual results in TEST_REPORT/BENCHMARKS; signed v1.0.0 APK/checksum, clean source build, screenshots/disclosures/licenses/setup/demo handoff |
 
 P2 is intentionally deferred: SQLCipher, historical READ_SMS scan, sender timeline, evidence export and delete-after-viewing retention. The supplied plan explicitly classifies these as optional beyond the hackathon core. History supports seven or 30 days.
 

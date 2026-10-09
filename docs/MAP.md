@@ -4,7 +4,7 @@ SALAG TRACE is one Android module, `:app`, application ID `ph.salagtrace`. `IMPL
 
 ## Build and runtime
 
-`gradle/libs.versions.toml` pins libraries. AGP 8.13.1 / Gradle 8.13 / Kotlin 2.2.20 / JBR 21 build Android API 29+ with SDK 36, JVM 17 and arm64 only. `third_party/llama.cpp` is a submodule pinned to v0.6.0. `app/src/main/cpp` builds a thin JNI library in Release, including debug APKs. Native APIs are adapted to that pinned header. No server, account, analytics, network client, or runtime download exists.
+`gradle/libs.versions.toml` pins libraries. AGP 8.13.1 / Gradle 8.13 / Kotlin 2.2.20 / JBR 21 build Android API 29+ with SDK 36, JVM 17 and arm64 only. `third_party/llama.cpp` is a submodule pinned to v0.6.0. `app/src/main/cpp` builds a thin JNI library in Release, including debug APKs. Native APIs are adapted to that pinned header; a HWCAP guard refuses CPUs without the optimized FP16/dot-product support. No server, account, analytics, network client, or runtime download exists.
 
 `SalagApp.kt` / `AppContainer` manually construct Room, DataStore, the singleton engine, model manager, scheduler, notifier, and application IO scope. Startup purges expired history, scans models, and recovers queued/orphaned work. Memory pressure unloads an idle engine.
 
@@ -15,7 +15,7 @@ SALAG TRACE is one Android module, `:app`, application ID `ph.salagtrace`. `IMPL
 - `data/MessageRepository.kt`: masks before insert, assigns SMS/MANUAL/SAMPLE source, screens, purges retention and schedules flagged messages. Re-runs reset AI provenance and restore rule-only values.
 - `work/`: unique expedited `analysis-ID` with quota fallback. Debug-only input bounds exercise real failure transitions; release uses 90 seconds / 320 tokens. A single retry handles invalid JSON. Database updates do not resurrect deleted records.
 - `llm/`: private/external GGUF scan, atomic SAF import with progress, active model selection/removal; serialized engine mutex for load/decode/free, cancellation watchdog, two-minute idle unload. GBNF bounds JSON and requires evidence for flagged messages; fabricated quotes are still dropped.
-- `notify/AlertNotifier.kt`: high-importance private alerts for carrier SMS, immediate high rule score and final suspicious/scam result. No SMS body, quote, link or explanation enters a notification. Public lock-screen content is generic. Tap opens the matching detail. Samples/manual checks do not masquerade as incoming SMS alerts.
+- `notify/AlertNotifier.kt`: high-importance private alerts for carrier SMS, immediate high rule score and final suspicious/scam result. No SMS body, quote, link or explanation enters a notification. Public lock-screen content is generic. Tagged SMS identities cannot collide with the untagged foreground-work notification. Tap opens the matching detail. Samples/manual checks do not masquerade as incoming SMS alerts.
 
 ## Storage
 
@@ -33,4 +33,4 @@ DataStore `salag_settings`: consent_at, onboarding_done, monitoring_enabled, ai_
 
 `fixtures/eval_sms.jsonl` contains 20 synthetic labeled messages; its instrumentation asset copy must stay synchronized. `fixtures/sms_suite.txt` provides ten emulator messages. `scripts/` supplies environment, checksummed model downloads, model provisioning, SMS suite, and offline permission audit. Models/APKs/build products/local.properties are ignored.
 
-`app/src/test` exercises pure domain behavior; `app/src/androidTest` covers Room, real JNI/WorkManager/failure paths and Compose consent/manual flow. Benchmark and real receiver tests are explicit opt-ins; do not count assumption skips as passes. `TEST_REPORT.md` and `BENCHMARKS.md` record measured results and limitations. `docs/licenses` stores bundled font licensing. Release, privacy, setup, architecture and AI disclosures are in the root README and notices.
+`app/src/test` exercises pure domain behavior; `app/src/androidTest` covers Room, real JNI/WorkManager/failure paths, private notification identities and Compose consent/manual/deletion flow. Benchmark, receiver, reset and host-assisted recovery tests are explicit opt-ins; do not count assumption skips as passes. `TEST_REPORT.md` and `BENCHMARKS.md` record measured results and limitations. `docs/licenses` and `app/src/main/assets/licenses` hold offline license texts; `docs/screenshots` contains actual emulator captures. `RELEASE_SHA256SUMS.txt` identifies the archived sideload APK. Release, privacy, setup, architecture and AI disclosures are in the root README and notices.

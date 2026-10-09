@@ -22,7 +22,7 @@ An emulator launch crashed with `No ActivityResultRegistryOwner` after LocalCont
 
 ## Gradle device tests may remove app/model storage
 
-The connected-test runner uninstalled the target APK at teardown on this host, deleting its external model folder. A subsequent run skipped real-model tests. Those assumption skips are not native passes. For a provisioned emulator, install both APKs and invoke `adb shell am instrument -w -r ph.salagtrace.test/androidx.test.runner.AndroidJUnitRunner` directly; it preserves app/model storage. Reprovision after a Gradle teardown. The final provisioned suite passed 8 tests with 4 explicit optional skips.
+The connected-test runner uninstalled the target APK at teardown on this host, deleting its external model folder. A subsequent run skipped real-model tests. Those assumption skips are not native passes. For a provisioned emulator, install both APKs and invoke `adb shell am instrument -w -r ph.salagtrace.test/androidx.test.runner.AndroidJUnitRunner` directly; it preserves app/model storage. Reprovision after a Gradle teardown. The final provisioned suite passed 10 tests with 6 explicit optional skips; see TEST_REPORT.md for separately invoked checks.
 
 ## Background quota can stop work before inference
 
