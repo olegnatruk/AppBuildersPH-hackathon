@@ -20,7 +20,7 @@ Offline native Android SMS scam screening for Filipino, Taglish, and English. Re
 
 ## Verifying work
 
-Source `scripts/env.sh` and run `./gradlew assembleDebug` (verified on JBR 21). Run `./gradlew testDebugUnitTest` for JVM tests. Build device tests with `./gradlew assembleDebugAndroidTest`; `LlmSmokeTest` runs only with a model provisioned. Never count an assumption skip as a pass. Device acceptance tests are in plan §14; record actual results, including omissions.
+Source `scripts/env.sh` and run `./gradlew assembleDebug` (verified on JBR 21). Run `./gradlew testDebugUnitTest` for JVM tests. Build device tests with `./gradlew assembleDebugAndroidTest`; install both debug/test APKs and invoke `adb shell am instrument -w -r ph.salagtrace.test/androidx.test.runner.AndroidJUnitRunner` to preserve provisioned models (Gradle connected-test teardown may uninstall them). `LlmSmokeTest` needs a real model. Never count an assumption skip as a pass. Device acceptance tests are in plan §14; record actual results, including omissions.
 
 ## Keeping docs true
 

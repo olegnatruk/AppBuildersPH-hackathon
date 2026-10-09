@@ -76,3 +76,7 @@ A real background SMS burst caused JobScheduler to stop a worker waiting for the
 ## ADR-27 — Refuse unsupported optimized CPUs safely
 
 The plan's ARMv8.2 + dotprod backend cannot run on every arm64 Android 10 device. Check kernel HWCAP for scalar/vector FP16 and dot-product support before llama backend initialization. Unsupported hardware gets model-load failure and retains rule checks rather than entering instructions it cannot execute. The emulator's supported path is tested; an older physical CPU is not available for validation. Expose CPU requirements in setup/limits docs.
+
+## ADR-28 — Tag SMS alerts independently of foreground work
+
+Android identifies a notification by tag and ID. Give SMS alerts the stable tag `sms-<row id>` so the first message's numeric ID 1001 cannot replace WorkManager's untagged foreground notification on Android 10/11. Final AI updates reuse the same alert identity; deleting a row cancels that tagged alert. NotificationPrivacyTest verifies coexistence, cancellation, masked sender, content omission and private/public versions.

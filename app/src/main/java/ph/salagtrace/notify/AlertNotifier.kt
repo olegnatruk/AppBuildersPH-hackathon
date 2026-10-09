@@ -32,9 +32,9 @@ class AlertNotifier(private val context: Context) {
         val public = Notification.Builder(context,"scam_alerts").setSmallIcon(R.drawable.ic_notification).setContentTitle("SALAG TRACE").setContentText(if(fil) "Buksan ang app para suriin." else "Open the app to investigate.").build()
         val notification = Notification.Builder(context,"scam_alerts").setSmallIcon(R.drawable.ic_notification).setContentTitle(title).setContentText(line)
             .setContentIntent(pending).setAutoCancel(true).setOnlyAlertOnce(true).setVisibility(Notification.VISIBILITY_PRIVATE).setPublicVersion(public).setCategory(Notification.CATEGORY_MESSAGE).build()
-        try { manager.notify(id(m.id),notification) } catch (_: SecurityException) { /* Revocation can race the permission check. */ }
+        try { manager.notify("sms-${m.id}",id(m.id),notification) } catch (_: SecurityException) { /* Revocation can race the permission check. */ }
     }
     private fun id(value: Long) = (value % (Int.MAX_VALUE - 1000)).toInt() + 1000
-    fun cancel(id: Long) { manager.cancel(id(id)) }
+    fun cancel(id: Long) { manager.cancel("sms-$id",id(id)) }
     fun cancelAll() { manager.cancelAll() }
 }

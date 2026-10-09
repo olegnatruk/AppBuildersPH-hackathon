@@ -27,3 +27,7 @@ The connected-test runner uninstalled the target APK at teardown on this host, d
 ## Background quota can stop work before inference
 
 The ten-SMS foreground/background burst completed its SMS jobs, but JobScheduler interrupted a queued evaluation worker before native inference. Its replacement skipped the AI_FAILED row. Preserve QUEUED_AI for OS-stopped work and mark explicit cancellation before calling WorkManager cancel. StoppedWorkerTest exercises a real worker queued behind real native inference and verifies the conditional reset. The exploratory evaluation was aborted and rerun with the repair; its earlier rule-only failure is not counted as a successful AI run.
+
+## Testing a process crash without restarting inference twice
+
+`am kill` did not terminate the emulator process while its active JobService was running. The recovery check instead used `am crash` immediately after a fresh native-busy marker, confirmed the PID died, reopened the app, and observed its saved row. Starting a second instrumentation invocation immediately after reopening also restarts the target; that exploratory attempt timed out and is not a passing recovery check. Observe completion first, then invoke the optional verification assertion. The corrected check reached DONE with real model output and verified evidence (39,993 ms inference). Keep the normal native timeout; a busy host can legitimately produce a rule-only AI_TIMEOUT.
