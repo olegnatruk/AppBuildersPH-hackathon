@@ -36,3 +36,7 @@ The spike benchmark compared all three planned models on 20 fixtures. Qwen 1.5B 
 ## ADR-17 — Reserve full card spans during ordered masking
 
 Keep the plan's OTP → card → secret → account replacement priority, but identify valid full card spans first and exclude those from OTP candidates. Otherwise a nearby PIN/code label could redact only four digits of a spaced card and leave the remainder on disk. Currency amounts and phone numbers remain visible; tests cover these overlaps and final masked-coordinate offsets.
+
+## ADR-18 — Family scoring and recovery metadata
+
+Rule scores count each family once (maximum matched weight), preventing repeated synonyms or repeated SMS text from inflating risk. Brand mentions add a combined boost only with another signal. Benign do-not-share warnings are excluded from credential-request gating, and do not suppress positive requests or links. Add `analysisStartedAt` and native prefill/generation/load timing columns to Room version 1 for honest recovery and self-test metrics; no raw body or raw AI JSON column exists.

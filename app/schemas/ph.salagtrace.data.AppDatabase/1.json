@@ -1,0 +1,219 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "bd8ba1a44fc2649b48c62c96129f5781",
+    "entities": [
+      {
+        "tableName": "scanned_messages",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dedupKey` TEXT NOT NULL, `source` TEXT NOT NULL, `sender` TEXT NOT NULL, `maskedBody` TEXT NOT NULL, `maskSpansJson` TEXT NOT NULL, `receivedAt` INTEGER NOT NULL, `ruleScore` INTEGER NOT NULL, `ruleSignalsJson` TEXT NOT NULL, `urlsJson` TEXT NOT NULL, `state` TEXT NOT NULL, `verdict` TEXT NOT NULL, `confidence` TEXT NOT NULL, `category` TEXT NOT NULL, `tacticsJson` TEXT NOT NULL, `evidenceJson` TEXT NOT NULL, `explanation` TEXT, `explanationLang` TEXT, `disagreement` INTEGER NOT NULL, `droppedEvidence` INTEGER NOT NULL, `notesJson` TEXT NOT NULL, `modelName` TEXT, `latencyMs` INTEGER, `loadMs` INTEGER, `promptTokens` INTEGER, `genTokens` INTEGER, `prefillMs` REAL, `genMs` REAL, `error` TEXT, `analyzedAt` INTEGER, `analysisStartedAt` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dedupKey",
+            "columnName": "dedupKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sender",
+            "columnName": "sender",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maskedBody",
+            "columnName": "maskedBody",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maskSpansJson",
+            "columnName": "maskSpansJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "receivedAt",
+            "columnName": "receivedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ruleScore",
+            "columnName": "ruleScore",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ruleSignalsJson",
+            "columnName": "ruleSignalsJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "urlsJson",
+            "columnName": "urlsJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verdict",
+            "columnName": "verdict",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "confidence",
+            "columnName": "confidence",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tacticsJson",
+            "columnName": "tacticsJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "evidenceJson",
+            "columnName": "evidenceJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "explanation",
+            "columnName": "explanation",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "explanationLang",
+            "columnName": "explanationLang",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "disagreement",
+            "columnName": "disagreement",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "droppedEvidence",
+            "columnName": "droppedEvidence",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notesJson",
+            "columnName": "notesJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modelName",
+            "columnName": "modelName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "latencyMs",
+            "columnName": "latencyMs",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "loadMs",
+            "columnName": "loadMs",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "promptTokens",
+            "columnName": "promptTokens",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "genTokens",
+            "columnName": "genTokens",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "prefillMs",
+            "columnName": "prefillMs",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "genMs",
+            "columnName": "genMs",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "error",
+            "columnName": "error",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "analyzedAt",
+            "columnName": "analyzedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "analysisStartedAt",
+            "columnName": "analysisStartedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_scanned_messages_dedupKey",
+            "unique": true,
+            "columnNames": [
+              "dedupKey"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_scanned_messages_dedupKey` ON `${TABLE_NAME}` (`dedupKey`)"
+          },
+          {
+            "name": "index_scanned_messages_receivedAt",
+            "unique": false,
+            "columnNames": [
+              "receivedAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_scanned_messages_receivedAt` ON `${TABLE_NAME}` (`receivedAt`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bd8ba1a44fc2649b48c62c96129f5781')"
+    ]
+  }
+}
