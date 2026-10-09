@@ -5,7 +5,7 @@ mkdir -p models
 fetch() {
   local repo="$1" revision="$2" name="$3"
   if [[ ! -f "models/$name" ]]; then
-    curl --fail --location --retry 3 --continue-at - "https://huggingface.co/$repo/resolve/$revision/$name" -o "models/$name.part"
+    curl --fail --location --retry 3 --retry-all-errors --speed-time 60 --speed-limit 1024 --continue-at - "https://huggingface.co/$repo/resolve/$revision/$name" -o "models/$name.part"
     python3 - "models/$name.part" <<'PY'
 import sys,os
 p=sys.argv[1]
