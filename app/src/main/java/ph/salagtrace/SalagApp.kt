@@ -6,6 +6,7 @@ import androidx.room.Room
 import kotlinx.coroutines.*
 import ph.salagtrace.data.*
 import ph.salagtrace.llm.*
+import ph.salagtrace.work.*
 
 class SalagApp : Application() {
     lateinit var container: AppContainer
@@ -13,7 +14,7 @@ class SalagApp : Application() {
     override fun onCreate() {
         super.onCreate()
         container = AppContainer(this)
-        container.scope.launch { container.messages.purge(); container.models.rescan() }
+        container.scope.launch { container.messages.purge(); container.models.rescan(); container.scheduler.recover(container.database.messages()) }
     }
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
@@ -27,5 +28,7 @@ class AppContainer(context: Context) {
     val settings = SettingsRepository(context)
     val engine = LlmEngine(scope)
     val models = ModelManager(context, settings) { engine.unload() }
-    val messages = MessageRepository(database.messages(), settings)
+    val scheduler = AnalysisScheduler(context)
+    val messages = MessageRepository(database.messages(), settings, scheduler::enqueue)
+    var onAnalyzed: suspend (Long) -> Unit = {}
 }

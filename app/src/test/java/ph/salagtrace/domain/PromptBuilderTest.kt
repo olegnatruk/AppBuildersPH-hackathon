@@ -15,7 +15,7 @@ class PromptBuilderTest {
     @Test fun truncatesAndKeepsEmojiIntact() {
         val p = PromptBuilder.build("a".repeat(799) + "😀" + "b", "x", emptyList(), AppLanguage.ENGLISH)
         assertTrue(p.truncated); assertFalse(p.user.contains("😀"))
-        assertTrue(p.user.contains("English").not())
+        assertTrue(p.user.contains("English"))
         assertTrue(p.system.contains("English"))
     }
     @Test fun ruleContextIsIdsOnly() {

@@ -1,6 +1,7 @@
 package ph.salagtrace.llm
 
 object ScamGrammar {
+    fun requiringEvidence() = GBNF.replace("(item (\",\" ws item){0,2})?", "item (\",\" ws item){0,2}")
     const val GBNF = """
 root ::= "{" ws "\"verdict\"" ws ":" ws verdict "," ws "\"confidence\"" ws ":" ws confidence "," ws "\"category\"" ws ":" ws category "," ws "\"tactics\"" ws ":" ws tactics "," ws "\"evidence\"" ws ":" ws evidence "," ws "\"explanation\"" ws ":" ws explanation ws "}"
 ws ::= [ \t\n\r]{0,4}

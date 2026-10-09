@@ -44,3 +44,7 @@ Rule scores count each family once (maximum matched weight), preventing repeated
 ## ADR-19 — Calibrate the full prompt after spike false positives
 
 Keep the plan's untrusted-data, exact-quote, concise-language instructions and add explicit benign examples (ordinary chats, receipts, delivery updates) and the distinction between mentioning an OTP/payment and requesting one. This responds to measured spike false positives without changing model selection or inventing accuracy claims. Escape chat role tokens as well as SMS closing tags; truncate without splitting an emoji surrogate pair. Native output is still grammar constrained, validated, and fused. Static recommendations use generic official-channel wording instead of unverified hotline numbers; [GCash's official guidance](https://help.gcash.com/hc/en-us/articles/19578518834457-How-can-I-protect-my-GCash-account) supports the credential and verification advice.
+
+## ADR-20 — Require an evidence object for flagged nonempty messages
+
+Qwen ignored optional evidence even with prompt examples, so flagged-message completions use the same bounded grammar with a minimum of one evidence object (still within the schema's 0–3 range). Unflagged ALL-scope completions retain optional evidence. This requests a real model quote; it does not manufacture one. Every quote still passes the same exact/partial validator and can be dropped, with confidence reduced. The user's task instruction repeats the requested language directly before the untrusted fields to help this small model follow it.
