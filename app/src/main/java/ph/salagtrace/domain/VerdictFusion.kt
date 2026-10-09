@@ -4,6 +4,11 @@ object VerdictFusion {
     fun fuse(ai: AiAnalysis, rules: RuleResult, validated: ValidatedEvidence): FinalVerdict {
         var verdict = ai.verdict; var confidence = ai.confidence; var disagreement = false
         val notes = mutableListOf<String>(); val tactics = ai.tactics.toMutableList()
+        // A matching quote about COD is not evidence of deception. Keep genuine disagreement visible.
+        if (RoutineDeliveryContext.matches(rules) && verdict in setOf(Verdict.LIKELY_SCAM, Verdict.SUSPICIOUS)) {
+            verdict = Verdict.UNCERTAIN; confidence = Confidence.LOW; disagreement = true
+            notes += "ROUTINE_DELIVERY_DISAGREEMENT"
+        }
         if (validated.evidence.isEmpty() && verdict in setOf(Verdict.LIKELY_SCAM, Verdict.SUSPICIOUS)) {
             confidence = Confidence.LOW; notes += "NO_VERIFIED_EVIDENCE"
         }

@@ -46,5 +46,5 @@ object ScamRules {
         r("benign_fil", "benign", "\\b(?:huwag ibahagi|huwag i-?share|wag ibigay)\\b", -15, "Babala na huwag ibahagi", "Do-not-share warning", Tactic.CREDENTIAL_REQUEST),
     )
     fun label(id: String, language: AppLanguage) = all.firstOrNull { it.id == id }?.let { if (language == AppLanguage.FILIPINO) it.labelFil else it.labelEn }
-        ?: when (id) { "link" -> if (language == AppLanguage.FILIPINO) "May link" else "Link present"; "suspicious_link" -> if (language == AppLanguage.FILIPINO) "Kahina-hinalang domain" else "Suspicious domain"; else -> id }
+        ?: when (id) { RoutineDeliveryContext.SIGNAL_ID -> if (language == AppLanguage.FILIPINO) "COD kapag dumating ang rider" else "COD due at delivery"; "link" -> if (language == AppLanguage.FILIPINO) "May link" else "Link present"; "suspicious_link" -> if (language == AppLanguage.FILIPINO) "Kahina-hinalang domain" else "Suspicious domain"; else -> id }
 }

@@ -6,4 +6,4 @@ The intended users are people in the Philippines who want an explanation of susp
 
 Native Kotlin and Jetpack Compose, rules followed by real llama.cpp inference, and no INTERNET permission are fixed requirements in [the implementation plan](IMPLEMENTATION_PLAN.md). Sensitive values must be masked before persistence or inference. The app never reads SMS history, blocks, replies, or accesses chat services. AI may be wrong; uncertainty and the source of each result must be visible.
 
-Public repository publication, demo recording, social posting, and submission require the user's participation. The official briefing and physical-device availability have not been verified.
+Public repository publication, demo recording, social posting, and submission require the user's participation. The official briefing has not been verified. A connected TECNO phone has completed one production courier re-analysis; broader carrier/OEM reliability remains unverified.

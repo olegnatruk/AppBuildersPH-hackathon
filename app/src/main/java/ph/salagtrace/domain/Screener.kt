@@ -24,6 +24,9 @@ object Screener {
                 rule.family != "credential" || !negation.containsMatchIn(body.substring((m.range.first - 24).coerceAtLeast(0), m.range.first))
             }.map { rule to it }.toList()
         }
+        if (links.isEmpty()) RoutineDeliveryContext.signal(body, matches)?.let {
+            return RuleResult(0, listOf(it), emptyList())
+        }
         val hasRequest = matches.any { it.first.family == "credential" }
         matches.forEach { (rule, m) ->
             signals += RuleSignal(rule.id, TextSpan(m.range.first, m.range.last + 1), rule.tactic)
@@ -46,6 +49,7 @@ object Screener {
         return RuleResult(families.values.sum().coerceIn(0, 100), signals.distinctBy { it.id to it.span }, links)
     }
     fun ruleVerdict(rules: RuleResult): Verdict = when {
+        RoutineDeliveryContext.matches(rules) -> Verdict.LIKELY_SAFE
         rules.score >= 70 -> Verdict.LIKELY_SCAM
         rules.signals.any { it.tactic == Tactic.AI_MANIPULATION } -> Verdict.SUSPICIOUS
         rules.score >= 25 -> Verdict.SUSPICIOUS

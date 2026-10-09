@@ -14,6 +14,8 @@ Actual emulator captures: Filipino Home in both themes, an SMS investigation wit
 - Private alerts and detail navigation, dashboard, filtered history, manual paste checker, three-step onboarding, Filipino/English UI, dark/light appearance.
 - Seven/30-day retention, delete/disable controls, model import with progress, model picker and a self-test with actual token throughput and load/total times.
 
+Version 1.0.1 corrects a reported COD delivery false positive: routine payment on rider arrival stays a rule check in flagged-only scope. Links, advance fees, secrets or other risk disable that exception. Existing results can be refreshed with Re-run AI analysis; courier names do not authenticate a sender.
+
 Rules are labeled **Rule check**. Completed inference carries **On-device AI**, model name and measured time. Missing, failed, canceled or timed-out AI retains a rule result. A quote matching the message does not prove the model's reasoning is correct. Advice is static and uses official-channel guidance rather than generated hotline numbers.
 
 ## Build
@@ -35,7 +37,7 @@ source scripts/env.sh
 
 Release output: `app/build/outputs/apk/release/app-release.apk`. This sideload build is signed with the local Android debug key as permitted by the plan; it is not a Play Store distribution. Fresh build hosts generate a different key and may need to uninstall a previously installed APK before installing their own.
 
-The local verified build is archived as `artifacts/salag-trace-v1.0.0.apk` (APKs are intentionally ignored by Git). Its checksum is in [RELEASE_SHA256SUMS.txt](docs/RELEASE_SHA256SUMS.txt). Publish that APK/checksum together after confirming the public repository. The GGUF model is provisioned separately.
+The local verified build is archived as `artifacts/salag-trace-v1.0.1.apk` (APKs are intentionally ignored by Git). Its checksum is in [RELEASE_SHA256SUMS.txt](docs/RELEASE_SHA256SUMS.txt). Publish that APK/checksum together after confirming the public repository. The GGUF model is provisioned separately.
 
 ## Install and provision a model
 
@@ -97,7 +99,7 @@ adb shell am instrument -w -e class ph.salagtrace.LlmBenchmarkTest -e benchmark 
 adb shell am instrument -w -e class ph.salagtrace.FinalPipelineBenchmarkTest -e evaluate true ph.salagtrace.test/androidx.test.runner.AndroidJUnitRunner
 ```
 
-The default device suite skips optional benchmark/broadcast/reset/recovery tests; skips are not passes. Gradle’s connected-test teardown may uninstall the app and its model storage; for a provisioned emulator install the debug/test APKs and run `adb shell am instrument -w -r ph.salagtrace.test/androidx.test.runner.AndroidJUnitRunner` directly to preserve them. [Test report](docs/TEST_REPORT.md) distinguishes actual runs from physical-device or human-only tasks. [Benchmarks](docs/BENCHMARKS.md) record real measurements, limited synthetic accuracy, prompt versions and model selection. No timings or AI verdicts are mocked.
+The default device suite skips optional benchmark/courier/broadcast/reset/recovery tests; skips are not passes. Gradle’s connected-test teardown may uninstall the app and its model storage; for a provisioned emulator install the debug/test APKs and run `adb shell am instrument -w -r ph.salagtrace.test/androidx.test.runner.AndroidJUnitRunner` directly to preserve them. [Test report](docs/TEST_REPORT.md) distinguishes actual runs from physical-device or human-only tasks. [Benchmarks](docs/BENCHMARKS.md) record real measurements, limited synthetic accuracy, prompt versions and model selection. No timings or AI verdicts are mocked.
 
 ## Handoff
 

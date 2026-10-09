@@ -1,0 +1,93 @@
+{
+  "date": "2026-10-10",
+  "version": "1.0.1",
+  "device": "Pixel_8 API 37 arm64, 6 GB RAM, 16 KB pages",
+  "durationSeconds": 46.133,
+  "results": [
+    {
+      "class": "ph.salagtrace.AnalysisWorkerTest",
+      "test": "realScheduledPipelineAndMissingModelState",
+      "result": "pass"
+    },
+    {
+      "class": "ph.salagtrace.DeliveryNoticeRegressionTest",
+      "test": "codAndDangerousVariantUseRealProductionPipeline",
+      "result": "skip"
+    },
+    {
+      "class": "ph.salagtrace.FailureStateTest",
+      "test": "nativeTimeoutAndCancelAreBounded",
+      "result": "pass"
+    },
+    {
+      "class": "ph.salagtrace.FailureStateTest",
+      "test": "corruptGgufFailsWithoutCrash",
+      "result": "pass"
+    },
+    {
+      "class": "ph.salagtrace.FailureStateTest",
+      "test": "missingModelKeepsRuleResult",
+      "result": "pass"
+    },
+    {
+      "class": "ph.salagtrace.FailureStateTest",
+      "test": "workerTimeoutAndParseFailureRemainRuleChecks",
+      "result": "pass"
+    },
+    {
+      "class": "ph.salagtrace.FinalPipelineBenchmarkTest",
+      "test": "measuredFinalPipeline",
+      "result": "skip"
+    },
+    {
+      "class": "ph.salagtrace.LlmBenchmarkTest",
+      "test": "benchmarkProvisionedModels",
+      "result": "skip"
+    },
+    {
+      "class": "ph.salagtrace.LlmSmokeTest",
+      "test": "realModelProducesGrammarConstrainedJson",
+      "result": "pass"
+    },
+    {
+      "class": "ph.salagtrace.MessageDaoTest",
+      "test": "dedupFiltersRetentionAndDeletion",
+      "result": "pass"
+    },
+    {
+      "class": "ph.salagtrace.NotificationPrivacyTest",
+      "test": "privateAlertAndForegroundNotificationHaveSeparateIdentities",
+      "result": "pass"
+    },
+    {
+      "class": "ph.salagtrace.ProcessRecoveryTest",
+      "test": "reopenedProcessCompletesPersistedAnalysis",
+      "result": "skip"
+    },
+    {
+      "class": "ph.salagtrace.ProcessRecoveryTest",
+      "test": "prepareRunningAnalysisForHostCrash",
+      "result": "skip"
+    },
+    {
+      "class": "ph.salagtrace.ReceiverPipelineTest",
+      "test": "realBroadcastPersistsOnlyMaskedText",
+      "result": "skip"
+    },
+    {
+      "class": "ph.salagtrace.ResetDemoStateTest",
+      "test": "resetOnlyWhenExplicitlyRequested",
+      "result": "skip"
+    },
+    {
+      "class": "ph.salagtrace.StoppedWorkerTest",
+      "test": "stoppedQueuedWorkerCanResumeButExplicitCancelCannot",
+      "result": "pass"
+    },
+    {
+      "class": "ph.salagtrace.UiFlowTest",
+      "test": "consentGateDeniedPermissionPathAndMaskedManualRecord",
+      "result": "pass"
+    }
+  ]
+}

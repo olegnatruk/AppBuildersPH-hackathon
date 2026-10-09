@@ -31,3 +31,7 @@ The ten-SMS foreground/background burst completed its SMS jobs, but JobScheduler
 ## Testing a process crash without restarting inference twice
 
 `am kill` did not terminate the emulator process while its active JobService was running. The recovery check instead used `am crash` immediately after a fresh native-busy marker, confirmed the PID died, reopened the app, and observed its saved row. Starting a second instrumentation invocation immediately after reopening also restarts the target; that exploratory attempt timed out and is not a passing recovery check. Observe completion first, then invoke the optional verification assertion. The corrected check reached DONE with real model output and verified evidence (39,993 ms inference). Keep the normal native timeout; a busy host can legitimately produce a rule-only AI_TIMEOUT.
+
+## A verified quote can still support a false courier accusation
+
+In v1.0.0, generic courier/payment wording reached AI at rule score 40; quote-location validation did not prevent an incorrect likely_scam conclusion. v1.0.1 adds the strict COD-on-arrival context in ADR-29. This is not proof that a sender is J&T or any other courier. A link, advance fee, credential request or manipulation instruction disables the exception. Already saved verdicts do not change during an APK update; use Re-run AI analysis to refresh both rules and actual inference from masked text.

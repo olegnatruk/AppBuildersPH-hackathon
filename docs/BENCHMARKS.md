@@ -15,7 +15,7 @@ Actual Qwen2.5-1.5B-Instruct Q4_K_M on Pixel_8, API 37 arm64, 6 GB emulator RAM,
 | Verdict | likely_scam |
 | Structured JSON | Valid |
 
-Source: [numeric smoke measurements](smoke-measurements.json). This is one synthetic sample, not a detection-accuracy estimate. The 20-fixture benchmark results are below. Physical-device performance remains unmeasured.
+Source: [numeric smoke measurements](smoke-measurements.json). This is one synthetic sample, not a detection-accuracy estimate. The 20-fixture benchmark results are below. Physical-device performance was unmeasured at this checkpoint.
 
 ## Candidate benchmark — 2026-10-09
 
@@ -33,7 +33,7 @@ All 20 synthetic fixtures were forced through AI to measure each model, includin
 
 Source: [all numeric per-fixture measurements](benchmark-measurements.json). The evidence metric is exact normalized quote matching in the spike harness, before the production partial-match validator exists. Cold/warm performance varied sharply; medians include all runs.
 
-## Final production pipeline — 2026-10-09
+## Final production pipeline — v1.0.0, 2026-10-09
 
 After full prompt examples, masking, FLAGGED gating, quote verification, fusion and OS-stop recovery, `FinalPipelineBenchmarkTest` completed all 20 fixtures in 274.832 seconds on the same offline emulator. Explanations were requested in Filipino. Temperature/seed/context/output limit remain 0.2/42/1536/320. Two terminal fixtures ran while the host performed a release build, so max latency includes host contention.
 
@@ -48,6 +48,12 @@ After full prompt examples, masking, FLAGGED gating, quote verification, fusion 
 | Retained verified quotes / dropped quotes | 30 / 0 |
 | AI unavailable/timeout/failure | 0 |
 
-`receipt` was falsely labeled likely_scam. The binary metric treats LIKELY_SCAM/SUSPICIOUS as flagged and UNCERTAIN/LIKELY_SAFE as not flagged; it does not assess category, prose quality, calibrated confidence, or the truth of reasoning. Verification covers quote location only. These are the same 20 synthetic fixtures used while developing the prompt, not an independent held-out test. Do not compare the 95% combined rules/AI result with the spike's forced-AI score as a measured generalization gain. The model still infers unstated details in some messages. Physical devices and real-world scam accuracy remain untested.
+`receipt` was falsely labeled likely_scam. The binary metric treats LIKELY_SCAM/SUSPICIOUS as flagged and UNCERTAIN/LIKELY_SAFE as not flagged; it does not assess category, prose quality, calibrated confidence, or the truth of reasoning. Verification covers quote location only. These are the same 20 synthetic fixtures used while developing the prompt, not an independent held-out test. Do not compare the 95% combined rules/AI result with the spike's forced-AI score as a measured generalization gain. The model still infers unstated details in some messages. Physical devices were untested at this checkpoint; real-world scam accuracy remains untested.
 
 Source: [final numeric per-fixture results](final-pipeline-measurements.json). A prior exploratory run exposed a JobScheduler interruption bug, was aborted, and is excluded from this completed measurement. `StoppedWorkerTest` separately passed the repaired queue/explicit-cancel regression with real native inference.
+
+## v1.0.1 courier regression — 2026-10-10
+
+The new COD context and prompt have targeted regression results in [courier-regression-results.json](courier-regression-results.json) and TEST_REPORT.md. The 20-fixture result above belongs to the v1.0.0 prompt; it has not been remeasured for v1.0.1 and is not a claim about the revised prompt’s aggregate accuracy.
+
+The actual saved notice also completed production re-analysis on the connected TECNO LH8n with Qwen 1.5B in 47.8 seconds, yielding LIKELY_SAFE ([non-content metadata](phone-courier-regression.json)). This is one physical-phone observation, not a comparative performance benchmark or sustained reliability measurement.

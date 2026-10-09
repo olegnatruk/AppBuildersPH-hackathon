@@ -2,7 +2,7 @@
 
 Date: 2026-10-09, Asia/Manila. Actual checks on an Apple Silicon host and Pixel_8 API 37 arm64 emulator: 6 GB guest RAM, four virtual cores, 16 KB pages. Wi-Fi/mobile data disabled for inference. No physical Android phone is connected. A passing emulator test is not a physical carrier/OEM reliability claim.
 
-## Final build and automated checks
+## v1.0.0 build and automated checks
 
 | Check | Observed result |
 |---|---|
@@ -59,4 +59,28 @@ Host contention can cause large latency variation and a legitimate AI_TIMEOUT; n
 
 ## Unverified / human steps
 
-Physical phone/carrier delivery, OEM battery behavior, sustained phone memory/thermal/battery behavior and physical-device speed remain untested. No public remote was supplied. Public repository/release publication, live demo recording/upload, verification of required social wording and participant form submission remain the human-confirmed handoff in [implementation status](IMPLEMENTATION_STATUS.md) and [demo script](DEMO_SCRIPT.md). Historical overnight times in the plan are not claimed completion timestamps.
+The single physical-phone courier re-analysis is recorded below; carrier delivery, OEM battery behavior and sustained phone memory/thermal/battery behavior remain untested. No public remote was supplied. Public repository/release publication, live demo recording/upload, verification of required social wording and participant form submission remain the human-confirmed handoff in [implementation status](IMPLEMENTATION_STATUS.md) and [demo script](DEMO_SCRIPT.md). Historical overnight times in the plan are not claimed completion timestamps.
+
+## v1.0.1 COD notice regression — 2026-10-10
+
+A user reported a legitimate courier notice classified as likely_scam. The original rules added company + delivery + payment mentions (40 points); the AI could then mistake ordinary COD/photo-proof wording for deception. No sender authenticity is inferred from this report or the new context classifier.
+
+The revised screening recognizes COD paid when the rider arrives, provided no independent danger is present. Links (including non-suspicious domains), secrets, advance fees/transfers, threats, urgency and injection disable the routine exception. ALL scope still performs real AI; a routine-context/model alarm is low-confidence UNCERTAIN with disagreement. Re-run re-screens stored masked text, allowing an old result to be corrected without reading inbox history. The fixture substitutes synthetic tracking/rider details for the user's personal message.
+
+59 JVM tests passed with zero skips/failures, including the original 20-fixture AI-gating checks and nine new courier/attack/fusion cases. Debug/test/R8 release builds and release lint passed. The explicit `DeliveryNoticeRegressionTest` passed in 45.462 seconds on the provisioned emulator; [actual numeric records](courier-regression-results.json):
+
+| Case | Actual result |
+|---|---|
+| Default flagged-only COD | SCREENED, LIKELY_SAFE, Rule check, no AI provenance |
+| ALL / Filipino | DONE, LIKELY_SAFE, 11,929 ms real Qwen, no disagreement |
+| ALL / English | DONE, LIKELY_SAFE, 9,575 ms real Qwen, no disagreement |
+| Re-run old payment rules | Re-screened at score zero, DONE, LIKELY_SAFE, 9,816 ms real Qwen |
+| COD plus advance-fee phishing link | DONE, LIKELY_SCAM, 13,974 ms real Qwen, three verified quotes |
+
+The v1.0.1 default provisioned suite also passed: 10 active passes, seven explicit optional skips, zero failures, 46.133 seconds ([individual results](device-test-results-v1.0.1.json)). The separately enabled courier test above is an additional pass.
+
+These are targeted synthetic regressions, not independent accuracy measurements. The earlier 19/20 evaluation belongs to v1.0.0 and is not claimed for this revised prompt. Package signing/alignment remain valid; the same model is used.
+
+Installed the signed v1.0.1 update on the connected TECNO LH8n (Android 14 / API 34); package versionCode 2 was confirmed, the full 1,117,320,736-byte model file remained present, and installed network-permission audit passed. This installation check does not establish carrier/OEM reliability.
+
+Re-ran the exact reported notice already saved in SALAG TRACE on that phone. Its detail changed to LIKELY_SAFE with actual Qwen2.5 1.5B / Q4_K_M inference taking 47.8 seconds offline ([non-content result metadata](phone-courier-regression.json)). This checks the user's existing record through the production re-run path; no carrier inbox was read and no SMS was sent. Temporary app UI dumps were removed, and personal tracking/rider details are excluded from repository artifacts. One successful phone inference does not establish sustained performance or broad detection accuracy.

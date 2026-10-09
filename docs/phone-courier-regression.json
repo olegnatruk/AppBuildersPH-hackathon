@@ -1,0 +1,6 @@
+{
+  "version": "1.0.1",
+  "device": "TECNO LH8n, Android 14",
+  "verdict": "Likely safe",
+  "provenance": "On-device AI · Qwen2.5 1.5B · Q4_K_M · 47.8 s · offline"
+}
