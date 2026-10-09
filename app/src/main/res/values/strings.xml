@@ -124,7 +124,7 @@
     <string name="self_failed">Self-test could not finish. Check the model and free memory, then retry.</string>
     <string name="privacy">Privacy</string>
     <string name="limits">How it works &amp; limits</string>
-    <string name="limits_body">Rules screen each new SMS first. A small offline model analyzes flagged messages, then every quoted span is checked against the saved masked text. A matching quote does not prove that the AI’s reasoning is right.\n\nSMS only: no RCS, Messenger, Viber, or WhatsApp. SMS permission is needed; this app is not the default SMS handler. It never blocks, replies to, or deletes carrier SMS. Force-stop prevents receipt until you open the app again. Some phones restrict background apps; review the phone’s battery settings if alerts stop. Notifications can be disabled without stopping analysis.\n\nAI can miss scams or flag legitimate messages. It can be slow, use substantial RAM and battery, and produce incorrect Filipino explanations. Use a phone with at least 6 GB RAM; physical-device reliability has not yet been verified. Google Play restricts SMS permissions; this build is for sideloading.</string>
+    <string name="limits_body">Rules screen each new SMS first. A small offline model analyzes flagged messages, then every quoted span is checked against the saved masked text. A matching quote does not prove that the AI’s reasoning is right.\n\nSMS only: no RCS, Messenger, Viber, or WhatsApp. SMS permission is needed; this app is not the default SMS handler. It never blocks, replies to, or deletes carrier SMS. Force-stop prevents receipt until you open the app again. Some phones restrict background apps; review the phone’s battery settings if alerts stop. Notifications can be disabled without stopping analysis.\n\nAI can miss scams or flag legitimate messages. It can be slow, use substantial RAM and battery, and produce incorrect Filipino explanations. AI requires arm64 FP16/dot-product CPU support and at least 6 GB RAM; physical-device reliability has not yet been verified. Google Play restricts SMS permissions; this build is for sideloading.</string>
     <string name="about">About</string>
     <string name="about_body">SALAG TRACE 1.0.0\nBuilt with OpenAI Codex assistance from the supplied implementation plan. Runtime AI: Qwen2.5 1.5B Instruct, running locally through llama.cpp. No cloud AI or analytics.\n\nApp and llama.cpp: MIT. Qwen2.5: Apache 2.0. AndroidX and Kotlin: Apache 2.0. IBM Plex fonts: SIL Open Font License. Full notices and development disclosure are in the repository.</string>
     <string name="ok">OK</string>
@@ -150,4 +150,5 @@
     <string name="just_now">Just now</string>
     <string name="minutes_ago">%1$d min ago</string>
     <string name="hours_ago">%1$d h ago</string>
+    <string name="licenses">Licenses</string>
 </resources>

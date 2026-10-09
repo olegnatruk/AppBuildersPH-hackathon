@@ -1,4 +1,6 @@
 #include <jni.h>
+#include <sys/auxv.h>
+#include <asm/hwcap.h>
 #include <llama.h>
 #include <atomic>
 #include <chrono>
@@ -22,6 +24,10 @@ struct Engine {
 static std::once_flag initialized;
 static void silent_log(ggml_log_level, const char *, void *) {}
 static void init() {
+    // The pinned optimized backend uses ARMv8.2 FP16 and dot-product instructions.
+    // Refuse unsupported CPUs before entering it so rule checks remain usable.
+    constexpr unsigned long required = HWCAP_ASIMDDP | HWCAP_ASIMDHP | HWCAP_FPHP;
+    if ((getauxval(AT_HWCAP) & required) != required) throw std::runtime_error("Unsupported CPU");
     std::call_once(initialized, [] { llama_log_set(silent_log, nullptr); ggml_log_set(silent_log, nullptr); llama_backend_init(); });
 }
 // JNI's modified UTF-8 cannot represent emoji correctly. Convert real UTF-16/UTF-8.

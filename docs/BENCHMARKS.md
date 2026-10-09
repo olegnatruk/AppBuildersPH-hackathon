@@ -32,3 +32,22 @@ All 20 synthetic fixtures were forced through AI to measure each model, includin
 **Limit:** the spike prompt produced substantial false positives (Qwen 1.5B got seven of eight benign messages wrong). Do not claim broad accuracy from this small synthetic set. Production uses the full prompt with rule context, masking, selective AI, verified evidence, and fusion; these need their own end-to-end checks. Gemma also missed the injection fixture, motivating the deterministic manipulation floor in the planned fusion. No physical-device benchmarks exist.
 
 Source: [all numeric per-fixture measurements](benchmark-measurements.json). The evidence metric is exact normalized quote matching in the spike harness, before the production partial-match validator exists. Cold/warm performance varied sharply; medians include all runs.
+
+## Final production pipeline — 2026-10-09
+
+After full prompt examples, masking, FLAGGED gating, quote verification, fusion and OS-stop recovery, `FinalPipelineBenchmarkTest` completed all 20 fixtures in 274.832 seconds on the same offline emulator. Explanations were requested in Filipino. Temperature/seed/context/output limit remain 0.2/42/1536/320. Two terminal fixtures ran while the host performed a release build, so max latency includes host contention.
+
+| Measurement | Actual result |
+|---|---:|
+| Binary flagged/not-flagged decisions matching labels | 19/20 |
+| Scam fixtures flagged | 12/12 |
+| Benign fixtures not flagged | 7/8 |
+| Actual AI completions / rule-only records | 14 / 6 |
+| Successful structured AI results | 14/14 |
+| AI latency p50 / max | 14902 / 53942 ms |
+| Retained verified quotes / dropped quotes | 30 / 0 |
+| AI unavailable/timeout/failure | 0 |
+
+`receipt` was falsely labeled likely_scam. The binary metric treats LIKELY_SCAM/SUSPICIOUS as flagged and UNCERTAIN/LIKELY_SAFE as not flagged; it does not assess category, prose quality, calibrated confidence, or the truth of reasoning. Verification covers quote location only. These are the same 20 synthetic fixtures used while developing the prompt, not an independent held-out test. Do not compare the 95% combined rules/AI result with the spike's forced-AI score as a measured generalization gain. The model still infers unstated details in some messages. Physical devices and real-world scam accuracy remain untested.
+
+Source: [final numeric per-fixture results](final-pipeline-measurements.json). A prior exploratory run exposed a JobScheduler interruption bug, was aborted, and is excluded from this completed measurement. `StoppedWorkerTest` separately passed the repaired queue/explicit-cancel regression with real native inference.

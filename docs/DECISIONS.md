@@ -72,3 +72,7 @@ Compose's transitive older Espresso failed before the UI test could interact: re
 ## ADR-26 — OS-stopped work remains queued
 
 A real background SMS burst caused JobScheduler to stop a worker waiting for the engine, then reschedule it. Treating every coroutine cancellation as AI_FAILED made the replacement worker skip that message. Cancellation from Android now conditionally resets only QUEUED_AI/ANALYZING rows to QUEUED_AI; WorkManager handles rescheduling. The UI marks explicit cancellation terminal before stopping work, so it cannot be re-queued. Deleted, completed or explicitly canceled rows are not changed. Evaluation wait bounds allow queued burst work without changing the native 90-second inference cap.
+
+## ADR-27 — Refuse unsupported optimized CPUs safely
+
+The plan's ARMv8.2 + dotprod backend cannot run on every arm64 Android 10 device. Check kernel HWCAP for scalar/vector FP16 and dot-product support before llama backend initialization. Unsupported hardware gets model-load failure and retains rule checks rather than entering instructions it cannot execute. The emulator's supported path is tested; an older physical CPU is not available for validation. Expose CPU requirements in setup/limits docs.

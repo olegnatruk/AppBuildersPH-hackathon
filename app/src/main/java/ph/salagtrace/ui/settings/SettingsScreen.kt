@@ -1,6 +1,8 @@
 package ph.salagtrace.ui.settings
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Sms
@@ -20,7 +22,9 @@ import ph.salagtrace.ui.theme.PlexMono
 import java.io.File
 
 @Composable fun SettingsScreen(vm: AppViewModel, settings: AppSettings, permissions: PermissionState, file: File?, models: List<File>, engine: EngineState, importing: ImportState, selfTest: SelfTestState, askSms: () -> Unit, import: () -> Unit) {
-    val privateDirectory = LocalContext.current.filesDir.toPath()
+    val context = LocalContext.current
+    val privateDirectory = context.filesDir.toPath()
+    var licenseText by remember { mutableStateOf<String?>(null) }
     var reset by remember { mutableStateOf(false) }; var remove by remember { mutableStateOf(false) }
     var info by remember { mutableStateOf<Int?>(null) }
     LazyColumn(contentPadding = PaddingValues(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
@@ -75,10 +79,13 @@ import java.io.File
             Text("adb shell dumpsys package ph.salagtrace", fontFamily = PlexMono, style = MaterialTheme.typography.bodySmall)
         } }
         item { BoardCard { SectionTitle(R.string.limits); Text(text(R.string.limits_body), style = MaterialTheme.typography.bodySmall) } }
-        item { BoardCard { SectionTitle(R.string.about); Text(text(R.string.about_body), style = MaterialTheme.typography.bodySmall) } }
+        item { BoardCard { SectionTitle(R.string.about); Text(text(R.string.about_body), style = MaterialTheme.typography.bodySmall)
+            TextButton(onClick = { licenseText = context.assets.list("licenses").orEmpty().sorted().joinToString("\n\n") { name -> name + "\n\n" + context.assets.open("licenses/$name").bufferedReader().use { it.readText() } } }) { Text(text(R.string.licenses)) }
+        } }
     }
     if(reset) ConfirmDialog(R.string.delete_all_data,R.string.reset_body,{ reset = false },{ vm.deleteAll(true); reset = false })
     if(remove) ConfirmDialog(R.string.remove_model,R.string.remove_model_body,{ remove = false },{ vm.removeModel(); remove = false })
+    licenseText?.let { body -> AlertDialog(onDismissRequest = { licenseText = null },title = { Text(text(R.string.licenses)) },text = { Text(body,Modifier.heightIn(max = 440.dp).verticalScroll(rememberScrollState()),style = MaterialTheme.typography.bodySmall) },confirmButton = { TextButton(onClick = { licenseText = null }) { Text(text(R.string.ok)) } }) }
     info?.let { id -> AlertDialog(onDismissRequest = { info = null },title = { Text(text(R.string.stored_title)) },text = { Text(text(id)) },confirmButton = { TextButton(onClick = { info = null }) { Text(text(R.string.ok)) } }) }
 }
 @Composable private fun Choice(label: String, selected: Boolean, choose: () -> Unit) {
