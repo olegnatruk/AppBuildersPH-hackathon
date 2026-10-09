@@ -1,0 +1,1 @@
+<resources><style name="Theme.SalagTrace" parent="android:style/Theme.Material.NoActionBar"><item name="android:windowLightStatusBar">false</item><item name="android:windowActionModeOverlay">true</item><item name="android:fontFamily">sans</item><item name="android:colorAccent">#F5B83D</item></style></resources>

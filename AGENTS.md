@@ -20,7 +20,7 @@ Offline native Android SMS scam screening for Filipino, Taglish, and English. Re
 
 ## Verifying work
 
-At bootstrap no build or tests existed. Source `scripts/env.sh` and check `java -version` (21). Update this section with verified build/test commands once available. Device acceptance tests are in plan §14; record actual results, including omissions.
+Source `scripts/env.sh` and run `./gradlew assembleDebug` (verified on JBR 21). Unit and device test commands will be added when tests exist. Device acceptance tests are in plan §14; record actual results, including omissions.
 
 ## Keeping docs true
 

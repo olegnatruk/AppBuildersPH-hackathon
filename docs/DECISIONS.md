@@ -16,3 +16,7 @@ The following decisions were fixed by implementation plan §3 before coding. ADR
 | ADR-10 | Evidence must be found in the SMS text or it is dropped | Prevents fabricated evidence from reaching the user. |
 | ADR-11 | Manual DI (`AppContainer` in `SalagApp`) | No Hilt annotation-processing risk overnight. |
 | ADR-12 | Native code always compiled `-DCMAKE_BUILD_TYPE=Release`, also for debug APKs | Debug-compiled llama.cpp is ~10x slower and would ruin the demo. |
+
+## ADR-13 — Reproduce the Compose template with a verified toolchain
+
+The plan permits replicating the Empty Activity template. Use AGP 8.13.1, Gradle 8.13, Kotlin 2.2.20 and KSP 2.2.20-2.0.4, rather than driving Android Studio's wizard. This retains the single-module Compose build and avoids AGP 9's different Kotlin integration. Compatibility was checked against [AGP release notes](https://developer.android.com/build/releases/agp-8-13-0-release-notes) and [KSP's release](https://github.com/google/ksp/releases/tag/2.2.20-2.0.4).
