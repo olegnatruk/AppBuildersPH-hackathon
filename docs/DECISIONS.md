@@ -48,3 +48,7 @@ Keep the plan's untrusted-data, exact-quote, concise-language instructions and a
 ## ADR-20 — Require an evidence object for flagged nonempty messages
 
 Qwen ignored optional evidence even with prompt examples, so flagged-message completions use the same bounded grammar with a minimum of one evidence object (still within the schema's 0–3 range). Unflagged ALL-scope completions retain optional evidence. This requests a real model quote; it does not manufacture one. Every quote still passes the same exact/partial validator and can be dropped, with confidence reduced. The user's task instruction repeats the requested language directly before the untrusted fields to help this small model follow it.
+
+## ADR-21 — Real failure-state instrumentation with debug bounds
+
+Debug workers may accept internal test input for shorter timeouts and generation caps. Release workers always use the planned 90 seconds and 320 tokens. This lets instrumented tests exercise real native timeout and truncated JSON → retry → AI_FAILED transitions, rather than returning fabricated inference. The debug knobs are not exported to a UI, receiver, or external intent.

@@ -8,6 +8,7 @@ import androidx.work.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.encodeToString
+import ph.salagtrace.BuildConfig
 import ph.salagtrace.SalagApp
 import ph.salagtrace.data.*
 import ph.salagtrace.domain.*
@@ -34,15 +35,17 @@ class AnalysisWorker(context: Context, parameters: WorkerParameters) : Coroutine
             if (model == null) { fail(row, AnalysisState.AI_UNAVAILABLE, "Install a GGUF model to run on-device AI. Rule check is available."); return Result.success() }
             val preferences = c.settings.settings.first()
             val prompt = PromptBuilder.build(row.maskedBody, row.sender, row.rules().signals, preferences.language)
+            val timeout = if (BuildConfig.DEBUG) inputData.getLong("timeoutMs", 90_000).coerceIn(1, 90_000) else 90_000L
+            val tokens = if (BuildConfig.DEBUG) inputData.getInt("maxTokens", 320).coerceIn(1, 320) else 320
             var last: LlmCompletion? = null; var parsed: AiAnalysis? = null; var totalMs = 0L; var totalLoadMs = 0L
             var retried = false
             for (attempt in 0..1) {
-                val completion = c.engine.complete(model, prompt.system, prompt.user, id, temperature = if (attempt == 0) 0.2f else 0.0f, grammar = if (row.rules().needsAi(AiScope.FLAGGED)) ScamGrammar.requiringEvidence() else ScamGrammar.GBNF) {
+                val completion = c.engine.complete(model, prompt.system, prompt.user, id, temperature = if (attempt == 0) 0.2f else 0.0f, grammar = if (row.rules().needsAi(AiScope.FLAGGED)) ScamGrammar.requiringEvidence() else ScamGrammar.GBNF, timeoutMs = timeout, maxTokens = tokens) {
                     c.database.messages().setState(id, AnalysisState.ANALYZING, System.currentTimeMillis())
                 }
                 last = completion; totalMs += completion.latencyMs; totalLoadMs += completion.loadMs
                 when (completion.result.stop) {
-                    "timeout" -> { fail(row, AnalysisState.AI_TIMEOUT, "Local AI reached the 90-second limit. You can retry."); return Result.success() }
+                    "timeout" -> { fail(row, AnalysisState.AI_TIMEOUT, "Local AI reached its time limit. You can retry."); return Result.success() }
                     "cancel" -> { fail(row, AnalysisState.AI_FAILED, "Analysis canceled. Rule check remains available."); return Result.success() }
                     "error" -> { fail(row, AnalysisState.AI_FAILED, "Local AI could not run. Check the model and available memory."); return Result.success() }
                 }

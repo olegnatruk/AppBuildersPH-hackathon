@@ -30,7 +30,7 @@ class LlmEngine(private val scope: CoroutineScope) {
     val state: StateFlow<EngineState> = _state.asStateFlow()
 
     suspend fun complete(file: File, system: String, user: String, ownerId: Long,
-        timeoutMs: Long = 90_000, temperature: Float = 0.2f, grammar: String = ScamGrammar.GBNF, onStarted: suspend () -> Unit = {}): LlmCompletion = mutex.withLock {
+        timeoutMs: Long = 90_000, temperature: Float = 0.2f, grammar: String = ScamGrammar.GBNF, maxTokens: Int = 320, onStarted: suspend () -> Unit = {}): LlmCompletion = mutex.withLock {
         idleJob?.cancel(); currentOwner = ownerId; cancelledOwner = null
         val callerJob = currentCoroutineContext()[Job]
         val start = System.nanoTime()
@@ -48,7 +48,7 @@ class LlmEngine(private val scope: CoroutineScope) {
             }
             // Retain the mutex until JNI really returns, even if WorkManager stops this coroutine.
             val result = withContext(NonCancellable + Dispatchers.Default) {
-                NativeResult.parse(LlamaNative.nativeComplete(handle, system, user, grammar, 320, temperature, 42, timeoutMs))
+                NativeResult.parse(LlamaNative.nativeComplete(handle, system, user, grammar, maxTokens.coerceIn(1, 320), temperature, 42, timeoutMs))
             }
             callerJob?.ensureActive()
             val latency = (System.nanoTime() - start) / 1_000_000
