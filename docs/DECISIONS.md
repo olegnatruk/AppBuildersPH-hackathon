@@ -20,3 +20,7 @@ The following decisions were fixed by implementation plan §3 before coding. ADR
 ## ADR-13 — Reproduce the Compose template with a verified toolchain
 
 The plan permits replicating the Empty Activity template. Use AGP 8.13.1, Gradle 8.13, Kotlin 2.2.20 and KSP 2.2.20-2.0.4, rather than driving Android Studio's wizard. This retains the single-module Compose build and avoids AGP 9's different Kotlin integration. Compatibility was checked against [AGP release notes](https://developer.android.com/build/releases/agp-8-13-0-release-notes) and [KSP's release](https://github.com/google/ksp/releases/tag/2.2.20-2.0.4).
+
+## ADR-14 — Pin llama.cpp v0.6.0
+
+Pinned [llama.cpp v0.6.0](https://github.com/ggml-org/llama.cpp/releases/tag/v0.6.0), commit `d81235049384534c167caea52b85a694f6103d14`, in `third_party/llama.cpp`. The newest release at setup uses a semantic tag rather than the plan's `bNNNN` naming. Public JNI APIs are checked against this pinned header. No runtime update mechanism exists.
