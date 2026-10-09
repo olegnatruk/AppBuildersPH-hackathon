@@ -7,3 +7,7 @@ The system JDK must not be used: source `scripts/env.sh` for Android Studio's JB
 ## Android
 
 Force-stopping prevents subsequent SMS broadcasts until the app is opened again. This is a documented platform limitation in the implementation plan, not a monitoring guarantee.
+
+## Model provisioning
+
+Creating `/sdcard/Android/data/ph.salagtrace` with `adb shell mkdir` before the app creates its external files directory gave the shell ownership and made the model invisible to the app. The smoke test correctly skipped (JUnit reports OK even for an assumption skip). Launch the app first so it creates `files/models`, then push the model. Inspect raw instrumentation status: code -4 means skipped, code 0 means passed. The directory was recreated by the app and real inference then passed.
