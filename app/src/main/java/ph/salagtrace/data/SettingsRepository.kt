@@ -14,7 +14,7 @@ private val Context.settingsStore by preferencesDataStore("salag_settings")
 data class AppSettings(
     val consentAt: Long = 0, val onboardingDone: Boolean = false, val monitoringEnabled: Boolean = false,
     val aiScope: AiScope = AiScope.FLAGGED, val language: AppLanguage = AppLanguage.FILIPINO,
-    val retentionDays: Int = 7, val activeModel: String = "",
+    val retentionDays: Int = 7, val activeModel: String = "", val darkTheme: Boolean = true, val smsAsked: Boolean = false, val notificationsAsked: Boolean = false,
 )
 class SettingsRepository(private val context: Context) {
     private object Keys {
@@ -25,18 +25,24 @@ class SettingsRepository(private val context: Context) {
         val language = stringPreferencesKey("language")
         val retention = intPreferencesKey("retention_days")
         val model = stringPreferencesKey("active_model")
+        val dark = booleanPreferencesKey("dark_theme")
+        val smsAsked = booleanPreferencesKey("sms_asked")
+        val notificationsAsked = booleanPreferencesKey("notifications_asked")
     }
     val settings: Flow<AppSettings> = context.settingsStore.data.catch { e -> if (e is IOException) emit(emptyPreferences()) else throw e }.map { p ->
         AppSettings(p[Keys.consent] ?: 0, p[Keys.onboarding] ?: false, p[Keys.monitoring] ?: false,
             runCatching { AiScope.valueOf(p[Keys.scope] ?: "FLAGGED") }.getOrDefault(AiScope.FLAGGED),
             runCatching { AppLanguage.valueOf(p[Keys.language] ?: "FILIPINO") }.getOrDefault(AppLanguage.FILIPINO),
-            (p[Keys.retention] ?: 7).let { if (it == 30) 30 else 7 }, p[Keys.model].orEmpty())
+            (p[Keys.retention] ?: 7).let { if (it == 30) 30 else 7 }, p[Keys.model].orEmpty(), p[Keys.dark] ?: true, p[Keys.smsAsked] ?: false, p[Keys.notificationsAsked] ?: false)
     }
     suspend fun consent() = context.settingsStore.edit { it[Keys.consent] = System.currentTimeMillis() }
     suspend fun finishOnboarding() = context.settingsStore.edit { it[Keys.onboarding] = true }
     suspend fun setLanguage(value: AppLanguage) = context.settingsStore.edit { it[Keys.language] = value.name }
     suspend fun setAiScope(value: AiScope) = context.settingsStore.edit { it[Keys.scope] = value.name }
     suspend fun setRetention(days: Int) = context.settingsStore.edit { it[Keys.retention] = if (days == 30) 30 else 7 }
+    suspend fun setDark(value: Boolean) = context.settingsStore.edit { it[Keys.dark] = value }
+    suspend fun markSmsAsked() = context.settingsStore.edit { it[Keys.smsAsked] = true }
+    suspend fun markNotificationsAsked() = context.settingsStore.edit { it[Keys.notificationsAsked] = true }
     suspend fun setActiveModel(path: String) = context.settingsStore.edit { it[Keys.model] = path }
     suspend fun setMonitoring(enabled: Boolean): Boolean {
         val allowed = enabled && settings.first().consentAt > 0 && context.checkSelfPermission(Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED

@@ -15,3 +15,11 @@ Creating `/sdcard/Android/data/ph.salagtrace` with `adb shell mkdir` before the 
 ## Structured inference
 
 The initial Qwen spike prompt produced zero evidence objects across 20 runs despite valid JSON. The first full worker run therefore reached DONE with low confidence and no verified evidence, and the assertion requiring a trace failed. Keep this failure visible: the full prompt now supplies concise harmless/risky JSON examples and explicitly requests an exact quote for risky verdicts. Never fill missing evidence with fabricated or rule-derived AI claims. Fil/EN examples also reinforce the requested explanation language.
+
+## Locale context and permission launchers
+
+An emulator launch crashed with `No ActivityResultRegistryOwner` after LocalContext was replaced by a configuration context. Preserve LocalActivityResultRegistryOwner from the original Activity in the theme provider. Compilation alone did not catch this runtime issue. The failed launch is not a passing UI check.
+
+## Gradle device tests may remove app/model storage
+
+The connected-test runner uninstalled the target APK at teardown on this host, deleting its external model folder. A subsequent run skipped real-model tests. Those assumption skips are not native passes. For a provisioned emulator, install both APKs and invoke `adb shell am instrument -w -r ph.salagtrace.test/androidx.test.runner.AndroidJUnitRunner` directly; it preserves app/model storage. Reprovision after a Gradle teardown. The final provisioned suite passed 8 tests with 4 explicit optional skips.

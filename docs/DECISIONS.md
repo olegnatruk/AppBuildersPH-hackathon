@@ -52,3 +52,19 @@ Qwen ignored optional evidence even with prompt examples, so flagged-message com
 ## ADR-21 — Real failure-state instrumentation with debug bounds
 
 Debug workers may accept internal test input for shorter timeouts and generation caps. Release workers always use the planned 90 seconds and 320 tokens. This lets instrumented tests exercise real native timeout and truncated JSON → retry → AI_FAILED transitions, rather than returning fabricated inference. The debug knobs are not exported to a UI, receiver, or external intent.
+
+## ADR-22 — Accessible light accent and source-aware private alerts
+
+The specified light amber #B7791F has only 3.64:1 contrast on white, below the same plan's 4.5:1 requirement. Use #946019 (5.32:1) for light theme primary text/buttons; retain the dark amber. Darken light suspicious text to #A94708 so its tinted badge also meets contrast. Verdicts always include an icon and words. Only Source.SMS produces alerts; samples and pasted messages stay in-app. Notification body contains a masked phone sender plus provenance, never SMS content, quotes, links, or AI prose. A generic public version protects lock screens.
+
+## ADR-23 — Preserve permission owner under locale overrides
+
+`createConfigurationContext` no longer exposes the ActivityResultRegistryOwner through its context chain. Capture and provide the original owner before swapping LocalContext, so runtime permission and SAF launchers work with Filipino/English strings. An actual emulator launch exposed this and the Compose flow test verifies the corrected startup and consent path.
+
+## ADR-24 — Add a phishing example without inventing AI explanations
+
+The full prompt's OTP example biased a link-only sample toward OTP theft. Add an exact phishing quote/example and explicitly prohibit that category without an OTP/password request. AI prose and category may still be wrong; quote verification establishes only correspondence to message text. Preserve model-generated output with a fallibility label and static advice; do not replace it with fabricated AI conclusions.
+
+## ADR-25 — Pin Espresso 3.7.0 for API 37 device tests
+
+Compose's transitive older Espresso failed before the UI test could interact: reflective `InputManager.getInstance` is unavailable on API 37. Add a test-only explicit Espresso 3.7.0 dependency. Its [official release notes](https://developer.android.com/jetpack/androidx/releases/test#espresso-3.7.0) document using getSystemService instead. No production dependency or permission changes.

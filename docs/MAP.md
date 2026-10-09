@@ -1,36 +1,36 @@
 # Repository map
 
-The repository began with only `IMPLEMENTATION_PLAN.md`. There was no application, build configuration, CI, or test runner. This map is updated as those are implemented.
+SALAG TRACE is one Android module, `:app`, application ID `ph.salagtrace`. `IMPLEMENTATION_PLAN.md` is the supplied scope; `PROJECT-BRIEF.md` summarizes the product. The implementation status and release handoff are in `IMPLEMENTATION_STATUS.md`.
 
-- `IMPLEMENTATION_PLAN.md`: product, architecture, task order, acceptance tests, and submission requirements.
-- `PROJECT-BRIEF.md`: audience and scope.
-- `scripts/env.sh`: local JBR 21 / Android SDK environment.
-- `docs/DECISIONS.md`: architectural decisions fixed by the plan.
+## Build and runtime
 
-Current implementation status: setup. Planned paths in the plan are not yet implemented facts.
+`gradle/libs.versions.toml` pins libraries. AGP 8.13.1 / Gradle 8.13 / Kotlin 2.2.20 / JBR 21 build Android API 29+ with SDK 36, JVM 17 and arm64 only. `third_party/llama.cpp` is a submodule pinned to v0.6.0. `app/src/main/cpp` builds a thin JNI library in Release, including debug APKs. Native APIs are adapted to that pinned header. No server, account, analytics, network client, or runtime download exists.
 
-## Android build
+`SalagApp.kt` / `AppContainer` manually construct Room, DataStore, the singleton engine, model manager, scheduler, notifier, and application IO scope. Startup purges expired history, scans models, and recovers queued/orphaned work. Memory pressure unloads an idle engine.
 
-`settings.gradle.kts` includes `:app`; `gradle/libs.versions.toml` pins dependency versions. `app/build.gradle.kts` sets package `ph.salagtrace`, Android 29 minimum / 36 compile and target, JVM 17. `MainActivity.kt` is currently a technical-spike placeholder. `app/src/main/res/xml` disables backup and transfer. The wrapper uses Gradle 8.13. App libraries match implementation plan §2.4.
+## Message path
 
-## Technical spike
+- `sms/`: consent/monitoring-gated `goAsync` receiver, multipart grouping, minute-bucket SHA-256 deduplication. Receiver work is bounded to eight seconds.
+- `domain/`: ordered secret masking, 37 rule patterns, grouped scoring, bounded untrusted-data prompt, tolerant JSON parsing, Unicode index-mapped quote validation, conservative verdict fusion, and static Fil/EN advice.
+- `data/MessageRepository.kt`: masks before insert, assigns SMS/MANUAL/SAMPLE source, screens, purges retention and schedules flagged messages. Re-runs reset AI provenance and restore rule-only values.
+- `work/`: unique expedited `analysis-ID` with quota fallback. Debug-only input bounds exercise real failure transitions; release uses 90 seconds / 320 tokens. A single retry handles invalid JSON. Database updates do not resurrect deleted records.
+- `llm/`: private/external GGUF scan, atomic SAF import with progress, active model selection/removal; serialized engine mutex for load/decode/free, cancellation watchdog, two-minute idle unload. GBNF bounds JSON and requires evidence for flagged messages; fabricated quotes are still dropped.
+- `notify/AlertNotifier.kt`: high-importance private alerts for carrier SMS, immediate high rule score and final suspicious/scam result. No SMS body, quote, link or explanation enters a notification. Public lock-screen content is generic. Tap opens the matching detail. Samples/manual checks do not masquerade as incoming SMS alerts.
 
-`app/src/main/java/ph/salagtrace/sms/SmsAssembler.kt` groups multipart PDUs in broadcast order and computes minute-bucket SHA-256 deduplication keys. `SmsReceiver.kt` is currently a content-free logging spike, not the final persisted pipeline.
+## Storage
 
-`app/src/main/cpp/salag_llm.cpp` wraps pinned public llama APIs; `LlamaNative.kt` is its JNI surface. `ScamGrammar.kt` bounds JSON enum/string/array output. `NativeResult.kt` decodes real token/timing measurements. `MainActivity.kt` currently exposes model load and completion controls. `LlmSmokeTest` requires an externally provisioned model; `LlmBenchmarkTest` runs explicitly with `-e benchmark true`.
+Room `salag.db`, `scanned_messages` schema v1, is exported in `app/schemas/`. Unique dedupKey and receivedAt indexes support deduplication and retention. Stored fields: source/sender/time, masked text and mask spans, rule score/signals/URLs, state/verdict/confidence/category/tactics, verified evidence/explanation/language, disagreement/dropped evidence/notes, model and real load/prompt/generation/total timing, error and analysis timestamps. There is no raw SMS or raw AI JSON column. App-private storage is not SQLCipher encrypted. Manifest and extraction rules disable backup/transfer.
 
-`fixtures/eval_sms.jsonl` contains 20 synthetic labeled messages (12 scam, 8 benign). The instrumentation asset is a copy; keep both synchronized. Provisioning and emulator checks live in `scripts/`.
+DataStore `salag_settings`: consent_at, onboarding_done, monitoring_enabled, ai_scope, language, retention_days, active_model, dark_theme, sms_asked, notifications_asked. Defaults: Filipino, flagged-only AI, seven-day history, dark appearance. Monitoring toggles the receiver component. Delete-all-data resets consent and disables monitoring but preserves model files.
 
-## P0 application
+## Interface
 
-- `SalagApp.kt` / `AppContainer`: manual DI for Room, DataStore, singleton engine, model manager, scheduler and receiver scope. Startup purges retention and recovers queued work. Memory pressure unloads an idle engine.
-- `data/`: Room `scanned_messages` v1 (exported schema in `app/schemas/`), unique dedupKey and receivedAt index; settings in DataStore `salag_settings` (`consent_at`, `onboarding_done`, `monitoring_enabled`, `ai_scope`, `language`, `retention_days`, `active_model`).
-- `sms/SmsReceiver.kt`: `goAsync` → consent/monitoring check → assemble → repository; bounded to 8 seconds, numeric-only SafeLog.
-- `domain/`: masking, 37 rules, prompt, tolerant parser, Unicode index-mapped exact/partial evidence validation, fusion and static Fil/EN recommendations.
-- `llm/`: private/external models folders, GGUF magic/size validation, SAF atomic import, real JNI, serial engine mutex, 120-second idle unload.
-- `work/`: unique expedited `analysis-ID`, quota fallback, foreground info for Android 10/11, cancellation and crash recovery. Debug-only internal timeout/token bounds support real failure tests.
-- `ui/AppViewModel.kt`: data/actions and state exposed to Compose, no JNI in screens.
-- `ui/nav/SalagNavHost.kt`: temporary P0 routes `messages` and `detail/{id}`, consent, runtime permissions, import, sample input and result trace. MainActivity reads notification `messageId` extras.
-- `ui/components/EvidenceTrace.kt`: verified spans / rule markers / masked tokens, with plain unclickable URLs.
+`MainActivity.kt` owns permissions, lifecycle refresh, and notification intents. `ui/AppViewModel.kt` exposes data/actions; Compose does not call JNI. `ui/nav/SalagNavHost.kt` routes Home, Messages, Settings, Check, and detail/id; unfinished onboarding replaces the normal navigation. Three-step onboarding includes explicit timestamped consent and denial-safe permissions. Previously refused permissions route to Android settings when appropriate.
 
-`onAnalyzed` is a callback reserved for notification wiring in P1. There is no server, account, cloud API or network client.
+`ui/theme/` contains Evidence Board colors, spacing, bundled IBM Plex fonts and locale configuration. Preserve the original ActivityResultRegistryOwner when providing a localized context. `res/values` and `values-tl` provide English/Filipino strings. `components/` includes verdict icon/color/text, status rows, source/state chips, dialogs and EvidenceTrace (verified amber spans, numbered markers, dotted rule borders, masked-token background). Links are plain text; copying requires a warning confirmation.
+
+## Verification and assets
+
+`fixtures/eval_sms.jsonl` contains 20 synthetic labeled messages; its instrumentation asset copy must stay synchronized. `fixtures/sms_suite.txt` provides ten emulator messages. `scripts/` supplies environment, checksummed model downloads, model provisioning, SMS suite, and offline permission audit. Models/APKs/build products/local.properties are ignored.
+
+`app/src/test` exercises pure domain behavior; `app/src/androidTest` covers Room, real JNI/WorkManager/failure paths and Compose consent/manual flow. Benchmark and real receiver tests are explicit opt-ins; do not count assumption skips as passes. `TEST_REPORT.md` and `BENCHMARKS.md` record measured results and limitations. `docs/licenses` stores bundled font licensing. Release, privacy, setup, architecture and AI disclosures are in the root README and notices.

@@ -27,8 +27,11 @@ assert h.hexdigest()==expected, "SHA-256 mismatch: " + p.name
 print(h.hexdigest(),p.name)
 PYHASH
 }
+# Default downloads the selected model only; --all adds both benchmark alternatives.
 fetch Qwen/Qwen2.5-1.5B-Instruct-GGUF 91cad51170dc346986eccefdc2dd33a9da36ead9 qwen2.5-1.5b-instruct-q4_k_m.gguf
+if [[ "${1:-}" == "--all" || "${1:-}" == "--with-gemma" ]]; then
 fetch Qwen/Qwen2.5-0.5B-Instruct-GGUF 9217f5db79a29953eb74d5343926648285ec7e67 qwen2.5-0.5b-instruct-q4_k_m.gguf
-if [[ "${1:-}" == "--with-gemma" ]]; then
+fi
+if [[ "${1:-}" == "--all" || "${1:-}" == "--with-gemma" ]]; then
   fetch ggml-org/gemma-3-1b-it-GGUF f9c28bcd85737ffc5aef028638d3341d49869c27 gemma-3-1b-it-Q4_K_M.gguf
 fi

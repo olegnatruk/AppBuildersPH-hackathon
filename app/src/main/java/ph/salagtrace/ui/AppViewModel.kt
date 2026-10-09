@@ -48,6 +48,9 @@ class AppViewModel(private val c: AppContainer) : ViewModel() {
     fun consent() = action { c.settings.consent() }
     fun finishOnboarding() = action { c.settings.setMonitoring(_permissions.value.sms); c.settings.finishOnboarding() }
     fun setMonitoring(value: Boolean) = action { if (value && !c.settings.setMonitoring(true)) _error.value = "Consent and SMS permission are needed." else if (!value) c.settings.setMonitoring(false) }
+    fun setDark(value: Boolean) = action { c.settings.setDark(value) }
+    fun markSmsAsked() = action { c.settings.markSmsAsked() }
+    fun markNotificationsAsked() = action { c.settings.markNotificationsAsked() }
     fun setLanguage(value: AppLanguage) = action { c.settings.setLanguage(value) }
     fun setScope(value: AiScope) = action { c.settings.setAiScope(value) }
     fun setRetention(value: Int) = action { c.settings.setRetention(value); c.messages.purge() }
@@ -63,9 +66,9 @@ class AppViewModel(private val c: AppContainer) : ViewModel() {
         val m = c.database.messages().byId(id) ?: return@action
         c.database.messages().update(m.copy(state = AnalysisState.AI_FAILED, error = "Analysis canceled. Rule check remains available.", modelName = null))
     }
-    fun delete(id: Long) = action { c.engine.cancel(id); c.scheduler.cancel(id); c.database.messages().deleteById(id) }
+    fun delete(id: Long) = action { c.engine.cancel(id); c.scheduler.cancel(id); c.database.messages().deleteById(id); c.notifier.cancel(id) }
     fun deleteAll(resetConsent: Boolean = false) = action {
-        c.engine.cancel(); c.scheduler.cancelAll(); c.database.messages().deleteAll()
+        c.engine.cancel(); c.scheduler.cancelAll(); c.database.messages().deleteAll(); c.notifier.cancelAll()
         if (resetConsent) c.settings.resetConsent()
     }
     fun runSelfTest() = action {

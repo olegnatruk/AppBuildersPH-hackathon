@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
+import ph.salagtrace.notify.AlertNotifier
 import ph.salagtrace.data.*
 import ph.salagtrace.llm.*
 import ph.salagtrace.work.*
@@ -29,6 +31,11 @@ class AppContainer(context: Context) {
     val engine = LlmEngine(scope)
     val models = ModelManager(context, settings) { engine.unload() }
     val scheduler = AnalysisScheduler(context)
-    val messages = MessageRepository(database.messages(), settings, scheduler::enqueue)
-    var onAnalyzed: suspend (Long) -> Unit = {}
+    val notifier = AlertNotifier(context)
+    val messages = MessageRepository(database.messages(), settings, scheduler::enqueue) { row ->
+        scope.launch { notifier.screened(row, settings.settings.first().language) }
+    }
+    var onAnalyzed: suspend (Long) -> Unit = { id ->
+        database.messages().byId(id)?.let { notifier.analyzed(it, settings.settings.first().language) }
+    }
 }
